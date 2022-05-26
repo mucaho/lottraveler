@@ -1,0 +1,64 @@
+version: "3.7"
+services:
+  meta-model-reasoner:
+    build: ../meta-model-reasoner
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  constraints-modeler:
+    build: ../constraints-modeler
+    environment:
+      - npm_package_config_MONGO_URI=mongodb://mongo:27017/constraints_modeler
+      - npm_package_config_ONTOLOGY_PREFIX=<http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#>
+      - npm_package_config_FUSEKI_URI=http://fuseki:3030/FAOntology
+      - npm_package_config_FUSEKI_AUTH=Basic YWRtaW46YWRtaW4=
+      - npm_package_config_REASONER_URI=http://meta-model-reasoner:8080
+    depends_on:
+      - "mongo"
+      - "fuseki"
+    command: ["/bin/wait-for.sh", "mongo:27017", "--", "node", "app.js"]
+    ports:
+      - "8888:8888"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  mongo:
+    image: "mongo:3"
+    healthcheck:
+      test: "if mongo --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'; then exit 0; fi; exit 1;"
+      start_period: 60s
+      interval: 60s
+      timeout: 15s
+      retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  fuseki:
+    image: "stain/jena-fuseki:jena4"
+    environment:
+      - ADMIN_PASSWORD=admin
+    ports:
+      - "3030:3030"
+    healthcheck:
+        test: "curl -f http://localhost:3030/ || exit 1"
+        start_period: 60s
+        interval: 60s
+        timeout: 15s
+        retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

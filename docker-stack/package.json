@@ -1,0 +1,9 @@
+{
+    "name": "docker-stack",
+    "version": "1.0.0",
+    "description": "Docker stack of all services of the LotTraveler project",
+    "scripts": {
+      "start": "docker-compose build --no-cache && docker-compose up -d",
+      "stop": "docker-compose stop && docker-compose rm -f"
+    }
+  }

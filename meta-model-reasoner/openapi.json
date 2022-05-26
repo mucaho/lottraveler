@@ -1,0 +1,441 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "LotTraveler - workflow validator & repairer",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "description": "Local server for testing",
+            "url": "http://localhost:8080"
+        }
+    ],
+    "paths": {
+        "/updateKnowledgeBase": {
+            "post": {
+                "operationId": "updateKnowledgeBase",
+                "description": "Update the knowledge base of workflow constraints",
+                "summary": "Update the knowledge base of workflow constraints, given that a consistent one is provided.",
+                "requestBody": {
+                    "description": "The potential new knowledge base of workflow constraints",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/KnowledgeBase"
+                            },
+                            "examples": {
+                                "Correct example": {
+                                    "value": {
+                                        "tasks": [
+                                            { "name": "evi", "repeatable": false, "group": "both"},
+                                            { "name": "ivi", "repeatable": false, "group": "both"}
+                                        ],
+                                        "connections": [
+                                            { "name": "has_successor", "transitive": true, "srcName": "evi", "dstName": "ivi" }
+                                        ]
+                                    }
+                                },
+                                "Incorrect example": {
+                                    "value": {
+                                        "tasks": [
+                                            { "name": "evi", "repeatable": false, "group": "both"},
+                                            { "name": "ivi", "repeatable": false, "group": "both"}
+                                        ],
+                                        "connections": [
+                                            { "name": "has_successor", "transitive": true, "srcName": "evi", "dstName": "ivi" },
+                                            { "name": "has_successor", "transitive": true, "srcName": "ivi", "dstName": "evi" }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Any potential knowledge base inconsistency errors that were uncovered, an empty list is otherwise returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseObject"
+                                },
+                                "examples": {
+                                    "Correct example": {
+                                        "value": { "errors" : [] }
+                                    },
+                                    "Incorrect example": {
+                                        "value": {
+                                            "errors" : [{
+                                                "errorCode": "reason(kb_not_a_directed_acyclic_graph)",
+                                                "description": "reason(kb_not_a_directed_acyclic_graph)"
+                                            }]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "4XX": {
+                        "$ref": "#/components/responses/ClientError"
+                    },
+                    "5XX": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/getKnowledgeBase": {
+            "get": {
+                "operationId": "getKnowledgeBase",
+                "description": "Get the knowledge base of workflow constraints",
+                "summary": "Get the knowledge base of workflow constraints, consisting of tasks and connections.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "The retrieved knowledge base of tasks and connections.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/KnowledgeBase"
+                                },
+                                "examples": {
+                                    "Example knowledge base": {
+                                        "value": {
+                                            "tasks" : [
+                                                { "name": "evi", "repeatable": false, "group": "both" },
+                                                { "name": "ivi", "repeatable": false, "group": "both" }
+                                            ],
+                                            "connections": [
+                                                { "name": "has_successor", "transitive": true, "srcName": "evi", "dstName": "ivi" }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "4XX": {
+                        "$ref": "#/components/responses/ClientError"
+                    },
+                    "5XX": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/validate": {
+            "post": {
+                "operationId": "validate",
+                "description": "Validate workflow constraints",
+                "summary": "Given a workflow validate whether all constraints are fulfilled.",
+                "requestBody": {
+                    "description": "The array of task names inside the workflow to validate",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TaskNameArray"
+                            },
+                            "examples": {
+                                "Correct example": {
+                                    "value": [ "evi", "ivi" ]
+                                },
+                                "Incorrect example": {
+                                    "value": [ "ivi", "evi" ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Any potential workflow errors that were uncovered, an empty list is otherwise returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseObject"
+                                },
+                                "examples": {
+                                    "Correct example": {
+                                        "value": { "errors" : [] }
+                                    },
+                                    "Incorrect example": {
+                                        "value": {
+                                            "errors" : [{
+                                                "errorCode": "reason(partial_order_violation)",
+                                                "description": "reason(partial_order_violation)",
+                                                "errorArg0": "task(\"evi\")",
+                                                "errorArg1": "task(\"ivi\")"
+                                            }]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "4XX": {
+                        "$ref": "#/components/responses/ClientError"
+                    },
+                    "5XX": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/repair": {
+            "post": {
+                "operationId": "repair",
+                "description": "Validate workflow constraints and repair by recommending alternative, valid workflow",
+                "summary": "Given a workflow validate whether all constraints are fulfilled. If not, return a recommended valid workflow.",
+                "requestBody": {
+                    "description": "The array of task names inside the workflow to validate",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TaskNameArray"
+                            },
+                            "examples": {
+                                "Correct example": {
+                                    "value": [ "evi", "ivi" ]
+                                },
+                                "Incorrect example": {
+                                    "value": [ "ivi", "evi" ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Any potential workflow errors that were uncovered, an empty list is otherwise. Furthermore a valid workflow is returned which is as close to the original workflow as possible (may contain the same tasks).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseObject"
+                                },
+                                "examples": {
+                                    "Correct example": {
+                                        "value": {
+                                            "errors" : []
+                                        }
+                                    },
+                                    "Incorrect example": {
+                                        "value": {
+                                            "errors" : [{
+                                                "errorCode": "reason(partial_order_violation)",
+                                                "description": "reason(partial_order_violation)",
+                                                "errorArg0": "task(\"evi\")",
+                                                "errorArg1": "task(\"ivi\")"
+                                            }],
+                                            "recommendation": [ "evi", "ivi" ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "4XX": {
+                        "$ref": "#/components/responses/ClientError"
+                    },
+                    "5XX": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "ClientError": {
+                "description": "The request was malformed (e.g. BadRequest 400)",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ResponseErrorObject"
+                        }
+                    }
+                }
+            },
+            "ServerError": {
+                "description": "The server encountered an error (e.g. InternalServerError 500)",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ResponseErrorObject"
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "Task": {
+                "type": "object",
+                "description": "Task description object.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the task."
+                    },
+                    "repeatable": {
+                        "type": "boolean",
+                        "description": "Repeatability of the task."
+                    },
+                    "group": {
+                        "type": "string",
+                        "description": "Group of tasks it belongs to.",
+                        "enum": [ "both", "non-destructive", "destructive"]
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["name", "repeatable", "group"]
+            },
+            "Connection": {
+                "type": "object",
+                "description": "Connection description object.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Type of the connection.",
+                        "enum": [
+                            "has_successor",
+                            "has_predecessor",
+                            "has_mandatory_successor",
+                            "has_mandatory_predecessor"
+                        ]
+                    },
+                    "transitive": {
+                        "type": "boolean",
+                        "description": "Transitiveness of the connection."
+                    },
+                    "srcName": {
+                        "type": "string",
+                        "description": "Source task of the connection."
+                    },
+                    "dstName": {
+                        "type": "string",
+                        "description": "Desination task of the connection."
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["name", "transitive", "srcName", "dstName"]
+            },
+            "TaskArray": {
+                "type": "array",
+                "description": "Array of task descriptions.",
+                "items": {
+                    "$ref": "#/components/schemas/Task"
+                },
+                "minItems": 0
+            },
+            "ConnectionArray": {
+                "type": "array",
+                "description": "Array of connection descriptions.",
+                "items": {
+                    "$ref": "#/components/schemas/Connection"
+                },
+                "minItems": 0
+            },
+            "KnowledgeBase": {
+                "type": "object",
+                "properties": {
+                    "tasks": {
+                        "$ref": "#/components/schemas/TaskArray"
+                    },
+                    "connections": {
+                        "$ref": "#/components/schemas/ConnectionArray"
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["tasks", "connections"]
+            },
+            "TaskNameArray": {
+                "type": "array",
+                "description": "Array of task names.",
+                "items": {
+                    "type": "string",
+                    "description": "Task name"
+                },
+                "minItems": 1
+            },
+            "ErrorObjectArray": {
+                "type": "array",
+                "description": "Array of error objects.",
+                "items": {
+                    "type": "object",
+                    "description": "Error object.",
+                    "properties": {
+                        "errorCode": {
+                            "type": "string",
+                            "description": "Cryptic, unique error code."
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Human-readable error description (in English)."
+                        },
+                        "errorArg0": {
+                            "type": "string",
+                            "description": "Optional, additional info about what is causing the error."
+                        },
+                        "errorArg1": {
+                            "type": "string",
+                            "description": "Optional, additional info about what is causing the error."
+                        },
+                        "errorArg2": {
+                            "type": "string",
+                            "description": "Optional, additional info about what is causing the error."
+                        },
+                        "errorArg3": {
+                            "type": "string",
+                            "description": "Optional, additional info about what is causing the error."
+                        },
+                        "errorArg4": {
+                            "type": "string",
+                            "description": "Optional, additional info about what is causing the error."
+                        },
+                        "errorArg5": {
+                            "type": "string",
+                            "description": "Optional, additional info about what is causing the error."
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["errorCode", "description"]
+                }
+            },
+            "ResponseObject": {
+                "type": "object",
+                "properties": {
+                    "errors": {
+                        "$ref": "#/components/schemas/ErrorObjectArray"
+                    },
+                    "recommendation": {
+                        "$ref": "#/components/schemas/TaskNameArray"
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["errors"]
+            },
+            "ResponseErrorObject": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Description of the encountered error."
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {},
+                        "description": "Any additional, more technical error descriptions."
+                    },
+                    "params": {
+                        "type": "object",
+                        "description": "Any available information on the error-causing input."
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["message"]
+            }
+        }
+    }
+}

@@ -1,0 +1,85 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX : $ONTOLOGY_PREFIX
+
+DELETE {
+    ?srcTask rdfs:subClassOf ?oldConn.
+    ?oldConn rdf:type owl:Restriction.
+    ?oldConn owl:onProperty ?connection.
+    ?oldConn owl:someValuesFrom ?dstTask.
+}
+WHERE {
+    VALUES (?srcTask ?connection ?dstTask ?transitive) {
+        $CONNECTIONS_WITH_DATA
+    }
+
+    OPTIONAL {
+        ?srcTask rdfs:subClassOf ?oldConn.
+        ?oldConn rdf:type owl:Restriction.
+        ?oldConn owl:onProperty ?connection.
+        ?oldConn owl:someValuesFrom ?dstTask.
+    }
+}
+
+;
+
+DELETE {
+    ?srcTask rdfs:subClassOf ?oldConn.
+    ?oldConn rdf:type owl:Restriction.
+    ?oldConn owl:someValuesFrom ?dstTask.
+    ?oldConn owl:onProperty ?b.
+    ?b rdfs:subPropertyOf ?connection.
+    ?b rdf:type owl:TransitiveProperty.
+}
+WHERE {
+    VALUES (?srcTask ?connection ?dstTask ?transitive) {
+        $CONNECTIONS_WITH_DATA
+    }
+
+    OPTIONAL {
+        ?srcTask rdfs:subClassOf ?oldConn.
+        ?oldConn rdf:type owl:Restriction.
+        ?oldConn owl:someValuesFrom ?dstTask.
+        ?oldConn owl:onProperty ?b.
+        ?b rdfs:subPropertyOf ?connection.
+        ?b rdf:type owl:TransitiveProperty.
+    }
+}
+
+;
+
+INSERT {
+    ?srcTask rdfs:subClassOf [
+        rdf:type owl:Restriction;
+        owl:onProperty ?connection;
+        owl:someValuesFrom ?dstTask
+    ].
+}
+WHERE {
+    VALUES (?srcTask ?connection ?dstTask ?transitive) {
+        $CONNECTIONS_WITH_DATA
+    }
+    FILTER(!?transitive).
+}
+
+;
+
+INSERT {
+    ?srcTask rdfs:subClassOf [
+        rdf:type owl:Restriction;
+        owl:onProperty [
+            rdfs:subPropertyOf ?connection;
+            rdf:type owl:TransitiveProperty
+        ];
+        owl:someValuesFrom ?dstTask
+    ].
+}
+WHERE {
+    VALUES (?srcTask ?connection ?dstTask ?transitive) {
+        $CONNECTIONS_WITH_DATA
+    }
+    FILTER(?transitive)
+}

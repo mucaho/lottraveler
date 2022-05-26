@@ -1,0 +1,33 @@
+{
+  "components": {
+    "decorators": {
+      "TaskDecorator": {
+        "src": "src/decorators/TaskDecorator"
+      }
+    },
+    "plugins": {
+      "UpdateReasoner": {
+        "src": "src/plugins/UpdateReasoner",
+        "test": "test/plugins/UpdateReasoner"
+      },
+      "ImportFromOntology": {
+        "src": "src/plugins/ImportFromOntology",
+        "test": "test/plugins/ImportFromOntology"
+      },
+      "ExportToOntology": {
+        "src": "src/plugins/ExportToOntology",
+        "test": "test/plugins/ExportToOntology"
+      }
+    },
+    "addons": {
+      "CheckDAGAddon": {
+        "src": "src/addons/CheckDAGAddon"
+      }
+    }
+  },
+  "dependencies": {
+    "decorators": {},
+    "plugins": {},
+    "addons": {}
+  }
+}

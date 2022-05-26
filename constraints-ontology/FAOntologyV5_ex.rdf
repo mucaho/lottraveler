@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5"
+     xml:base="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5"
+     xmlns:fa="http://community.infineon.com/sites/smart-FA-lab/Semantic_Search/FAOntologyV5#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:ontodebug="http://ainf.aau.at/ontodebug#"
+     xmlns:FAOntologyV5="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#">
+    <owl:Ontology rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5"/>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#comment -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2000/01/rdf-schema#comment"/>
+
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#label -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2000/01/rdf-schema#label"/>
+
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#seeAlso -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2000/01/rdf-schema#seeAlso"/>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#boolean -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#boolean"/>
+
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#integer -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#integer"/>
+
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#string -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_mandatory_predecessor -->
+
+    <owl:ObjectProperty rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_mandatory_predecessor">
+        <rdfs:subPropertyOf rdf:resource="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_predecessor"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:comment>a-cyclic</rdfs:comment>
+    </owl:ObjectProperty>
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_mandatory_successor -->
+
+    <owl:ObjectProperty rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_mandatory_successor">
+        <rdfs:subPropertyOf rdf:resource="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_successor"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:comment>a-cyclic</rdfs:comment>
+    </owl:ObjectProperty>
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_predecessor -->
+
+    <owl:ObjectProperty rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_predecessor">
+        <owl:inverseOf rdf:resource="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_successor"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:comment>a-cyclic</rdfs:comment>
+        <rdfs:comment>used in FA flow</rdfs:comment>
+    </owl:ObjectProperty>
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_successor -->
+
+    <owl:ObjectProperty rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#has_successor">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:comment>a-cyclic</rdfs:comment>
+        <rdfs:comment>used in Fa flow</rdfs:comment>
+    </owl:ObjectProperty>
+
+
+
+    <!-- http://www.w3.org/2002/07/owl#topObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#group -->
+
+    <owl:DatatypeProperty rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#group">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">both</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">destructive</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">non-destructive</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#repeatable -->
+
+    <owl:DatatypeProperty rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#repeatable">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#FailureAnalysisMethods -->
+
+    <owl:Class rdf:about="http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#FailureAnalysisMethods"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->

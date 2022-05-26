@@ -1,0 +1,32 @@
+{
+  "id": "ExportToOntology",
+  "name": "ExportToOntology",
+  "version": "0.1.0",
+  "description": "",
+  "icon": {
+    "class": "glyphicon glyphicon-cog",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "dependencies": [],
+  "writeAccessRequired": false,
+  "configStructure": [
+    {
+      "name": "renameTasks",
+      "displayName": "Rename tasks?",
+      "description": "Rename tasks in the ontology, which were renamed in the modeler.",
+      "value": false,
+      "valueType": "boolean",
+      "readOnly": false
+    },
+    {
+      "name": "deleteTasks",
+      "displayName": "Delete tasks?",
+      "description": "Delete tasks in the ontology, which were deleted in the modeler.",
+      "value": false,
+      "valueType": "boolean",
+      "readOnly": false
+    }
+  ]
+}

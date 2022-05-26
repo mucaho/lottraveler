@@ -1,0 +1,73 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX : $ONTOLOGY_PREFIX
+
+DELETE {
+    # This is commmented out so that the original method hierarchy is not modified
+    # ?task rdf:type owl:Class.
+    # ?task rdfs:subClassOf ?superTask.
+    ?task rdf:type owl:Class.
+    ?task rdfs:subClassOf :FailureAnalysisMethods.
+
+    ?task rdfs:subClassOf ?oldGroup.
+    ?oldGroup rdf:type owl:Restriction.
+    ?oldGroup owl:onProperty :group.
+    ?oldGroup owl:hasValue ?oldGroupValue.
+
+    ?task rdfs:subClassOf ?oldRepeatable.
+    ?oldRepeatable rdf:type owl:Restriction.
+    ?oldRepeatable owl:onProperty :repeatable.
+    ?oldRepeatable owl:hasValue ?oldRepeatableValue.
+}
+WHERE {
+    VALUES (?task ?group ?repeatable) {
+        $TASKS_WITH_DATA
+    }
+
+    OPTIONAL {
+        ?task rdf:type owl:Class.
+        ?task rdfs:subClassOf ?superTask.
+        ?superTask rdfs:subClassOf* :FailureAnalysisMethods.
+    }
+
+    OPTIONAL {
+        ?task rdfs:subClassOf ?oldGroup.
+        ?oldGroup rdf:type owl:Restriction.
+        ?oldGroup owl:onProperty :group.
+        ?oldGroup owl:hasValue ?oldGroupValue.
+    }
+
+    OPTIONAL {
+        ?task rdfs:subClassOf ?oldRepeatable.
+        ?oldRepeatable rdf:type owl:Restriction.
+        ?oldRepeatable owl:onProperty :repeatable.
+        ?oldRepeatable owl:hasValue ?oldRepeatableValue.
+    }
+}
+
+;
+
+INSERT {
+    ?task rdf:type owl:Class.
+    ?task rdfs:subClassOf :FailureAnalysisMethods.
+
+    ?task rdfs:subClassOf [
+        rdf:type owl:Restriction;
+        owl:onProperty :group;
+        owl:hasValue ?group
+    ].
+
+    ?task rdfs:subClassOf [
+        rdf:type owl:Restriction;
+        owl:onProperty :repeatable;
+        owl:hasValue ?repeatable
+    ].
+}
+WHERE {
+    VALUES (?task ?group ?repeatable) {
+        $TASKS_WITH_DATA
+    }
+}

@@ -1,0 +1,44 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX : $ONTOLOGY_PREFIX
+
+###
+# The following constant is extracted and used to determine the depth of generated query content, must be gte 1
+# $MAX_DEPTH=15
+###
+
+#SELECT
+DELETE {
+$DELETE_CLAUSE
+    ###
+    # The above placeholder is substited for the following, generated query content, given e.g. a depth of 3
+    # ?o3 ?p2 ?o2.
+    # ?o2 ?p1 ?o1.
+    # ?o1 ?p0 ?o0.
+    ###
+}
+WHERE {
+    ?task rdf:type owl:Class.
+    ?task rdfs:subClassOf+ :FailureAnalysisMethods.
+    FILTER( ?task NOT IN $TASKS_TO_KEEP ).
+    BIND(?task as ?o0).
+
+$WHERE_CLAUSE_REST
+    ###
+    # The above placeholder is substited for the following, generated query content, given e.g. a depth of 3
+    # ?o1 ?p0 ?o0.
+    #
+    # OPTIONAL {
+    #     FILTER( isBlank(?o1) ).
+    #     ?o2 ?p1 ?o1.
+    #
+    #     OPTIONAL {
+    #         FILTER( isBlank(?o2) ).
+    #         ?o3 ?p2 ?o2.
+    #     }
+    # }
+    ###
+}

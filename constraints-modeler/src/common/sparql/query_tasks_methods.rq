@@ -1,0 +1,23 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX : $ONTOLOGY_PREFIX
+
+SELECT ?task ?method
+WHERE {
+    ?task rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty :uses_method ;
+        owl:someValuesFrom ?method
+    ].
+
+    ?method rdf:type owl:Class.
+    ?method rdfs:subClassOf+ :FailureAnalysisMethods.
+    FILTER (!isBlank(?method) && isIRI(?method)).
+
+    ?task rdf:type owl:Class.
+    ?task rdfs:subClassOf+ :FailureAnalysisTasks.
+    FILTER (!isBlank(?task) && isIRI(?task)).
+}

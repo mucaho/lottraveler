@@ -1,0 +1,62 @@
+{
+  "name": "constraints-modeler",
+  "version": "1.0.0",
+  "description": "Workflow-constraints modeler for the LotTraveler project",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "config": {
+    "MONGO_URI": "mongodb://127.0.0.1:27017/constraints_modeler",
+    "ONTOLOGY_PREFIX": "<http://community.infineon.com/sites/smart-FA-lab/Semantic%20Search/FAOntologyV5#>",
+    "FUSEKI_URI": "http://127.0.0.1:3030/FAOntology",
+    "FUSEKI_AUTH": "Basic YWRtaW46YWRtaW4=",
+    "REASONER_URI": "http://127.0.0.1:8080"
+  },
+  "scripts": {
+    "start": "npm run mongo:start && npm run fuseki:start && sleep 10 && npm run webgme:start",
+    "stop": "npm run mongo:stop && npm run fuseki:stop",
+    "mongo:cleanup": "docker rm -v mongo-webgme || true",
+    "mongo:backup": "docker exec mongo-webgme sh -c 'mongodump --archive' > mongo-webgme.dump",
+    "mongo:restore": "docker exec -i mongo-webgme sh -c 'mongorestore --archive' < mongo-webgme.dump",
+    "mongo:start": "cross-env MONGO_INITDB_DATABASE=constraints_modeler docker run --rm -p 127.0.0.1:27017:27017 --name mongo-webgme -d mongo:3",
+    "mongo:stop": "docker stop mongo-webgme || true",
+    "fuseki:volume:start": "docker run --name fuseki-data -v /fuseki busybox",
+    "fuseki:volume:stop": "(docker stop fuseki-data && docker rm -v fuseki-data) || true",
+    "fuseki:init0:start": "docker run --volumes-from fuseki-data -e FUSEKI_DATASET_1=FAOntology -e ADMIN_PASSWORD=admin --name fuseki_init_0 -d stain/jena-fuseki:jena4",
+    "fuseki:init0:stop": "(docker stop fuseki_init_0 && docker rm -v fuseki_init_0) || true",
+    "fuseki:init0": "npm run fuseki:init0:start && sleep 20 && npm run fuseki:init0:stop",
+    "fuseki:init1:start": "docker run --volumes-from fuseki-data -e ADMIN_PASSWORD=admin -v `pwd`/../constraints-ontology:/staging --name fuseki_init_1 -d stain/jena-fuseki:jena4 ./load.sh FAOntology",
+    "fuseki:init1:stop": "(docker stop fuseki_init_1 && docker rm -v fuseki_init_1) || true",
+    "fuseki:init1": "npm run fuseki:init1:start && sleep 20 && npm run fuseki:init1:stop",
+    "fuseki:init": "npm run fuseki:init0 && npm run fuseki:init1",
+    "fuseki:server:start": "docker run -p 3030:3030 --volumes-from fuseki-data -e ADMIN_PASSWORD=admin --name fuseki -d stain/jena-fuseki:jena4",
+    "fuseki:server:stop": "(docker stop fuseki && docker rm -v fuseki) || true",
+    "fuseki:start:advanced": "npm run fuseki:volume:start && npm run fuseki:init && npm run fuseki:server:start",
+    "fuseki:stop:advanced": "npm run fuseki:server:stop && npm run fuseki:volume:stop",
+    "fuseki:start": "docker run -p 3030:3030 -e ADMIN_PASSWORD=admin --name fuseki -d stain/jena-fuseki:jena4",
+    "fuseki:stop": "(docker stop fuseki && docker rm -v fuseki) || true",
+    "webgme:start": "node app.js",
+    "webgme:test": "node ./node_modules/mocha/bin/mocha --recursive test",
+    "webgme:apply": "node ./node_modules/webgme-engine/src/bin/apply.js",
+    "webgme:diff": "node ./node_modules/webgme-engine/src/bin/diff.js",
+    "webgme:export": "node ./node_modules/webgme-engine/src/bin/export.js",
+    "webgme:import": "node ./node_modules/webgme-engine/src/bin/import.js",
+    "webgme:merge": "node ./node_modules/webgme-engine/src/bin/merge.js",
+    "webgme:plugin": "node ./node_modules/webgme-engine/src/bin/run_plugin.js",
+    "webgme:pluginHook": "node ./node_modules/webgme-engine/src/bin/plugin_hook.js",
+    "webgme:users": "node ./node_modules/webgme-engine/src/bin/usermanager.js",
+    "webgme:clean_up": "node ./node_modules/webgme-engine/src/bin/clean_up.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cross-env": "^7.0.3",
+    "rdf-ext": "^1.3.1",
+    "sparql-http-client": "^2.2.3",
+    "webgme": "^2.42.1"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "webgme-cli": "^2.8.5"
+  }
+}

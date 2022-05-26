@@ -1,0 +1,62 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX : $ONTOLOGY_PREFIX
+
+SELECT ?task ?property ?transitive ?restriction ?other_task
+WHERE {
+
+    # non-transitive connections
+    {
+        ?task rdfs:subClassOf [
+            rdf:type owl:Restriction ;
+            owl:onProperty ?property ;
+            ?restriction ?other_task ;
+        ].
+
+        FILTER(?property = :has_predecessor || ?property = :has_mandatory_predecessor
+            || ?property = :has_successor || ?property = :has_mandatory_successor).
+
+        FILTER (?restriction = owl:someValuesFrom || ?restriction = owl:allValuesFrom || ?restriction = owl:onClass ).
+
+        ?task rdf:type owl:Class.
+        ?task rdfs:subClassOf+ :FailureAnalysisMethods.
+        FILTER (!isBlank(?task) && isIRI(?task)).
+
+        ?other_task rdf:type owl:Class.
+        ?other_task rdfs:subClassOf+ :FailureAnalysisMethods.
+        FILTER (!isBlank(?other_task) && isIRI(?other_task)).
+
+        BIND ("false"^^xsd:boolean AS ?transitive).
+    }
+    UNION
+    # transitive connections
+    {
+        ?task rdfs:subClassOf [
+            rdf:type owl:Restriction ;
+            owl:onProperty ?b ;
+            ?restriction ?other_task ;
+        ].
+
+        ?b rdfs:subPropertyOf ?property.
+        ?b rdf:type owl:TransitiveProperty.
+        FILTER (isBlank(?b) && !isIRI(?b)).
+
+        FILTER(?property = :has_predecessor || ?property = :has_mandatory_predecessor
+            || ?property = :has_successor || ?property = :has_mandatory_successor).
+
+        FILTER (?restriction = owl:someValuesFrom || ?restriction = owl:allValuesFrom || ?restriction = owl:onClass ).
+
+        ?task rdf:type owl:Class.
+        ?task rdfs:subClassOf+ :FailureAnalysisMethods.
+        FILTER (!isBlank(?task) && isIRI(?task)).
+
+        ?other_task rdf:type owl:Class.
+        ?other_task rdfs:subClassOf+ :FailureAnalysisMethods.
+        FILTER (!isBlank(?other_task) && isIRI(?other_task)).
+
+        BIND ("true"^^xsd:boolean AS ?transitive).
+    }
+}

@@ -1,0 +1,151 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX : $ONTOLOGY_PREFIX
+
+###
+# The following constant is extracted and used to determine the depth of generated query content, must be gte 1
+# $MAX_DEPTH=8
+###
+
+#SELECT
+DELETE {
+$DELETE_CLAUSE
+    ###
+    # The above placeholder is substited for the following, generated query content, given e.g. a depth of 3
+    #
+    # ?o_bwd_2 ?p_bwd_2 ?o_bwd_1.
+    # ?o_bwd_1 ?p_bwd_1 ?o_bwd_0.
+    # ?o_bwd_0 ?p_bwd_0 ?o.
+    # ?o ?p_fwd_0 ?o_fwd_0.
+    # ?o_fwd_0 ?p_fwd_1 ?o_fwd_1.
+    # ?o_fwd_1 ?p_fwd_2 ?o_fwd_2.
+    ###
+}
+WHERE {
+    VALUES (?connectionType) {
+        $CONNECTION_TYPES
+    }
+
+    ?task rdfs:subClassOf ?o.
+    ?o rdf:type owl:Restriction.
+    ?o owl:onProperty ?connectionType.
+    ?o ?restriction ?other_task.
+
+    FILTER (?restriction = owl:someValuesFrom || ?restriction = owl:allValuesFrom || ?restriction = owl:onClass ).
+
+    ?task rdf:type owl:Class.
+    ?task rdfs:subClassOf+ :FailureAnalysisMethods.
+    FILTER (!isBlank(?task) && isIRI(?task)).
+
+    ?other_task rdf:type owl:Class.
+    ?other_task rdfs:subClassOf+ :FailureAnalysisMethods.
+    FILTER (!isBlank(?other_task) && isIRI(?other_task)).
+
+$WHERE_CLAUSE_REST
+    ###
+    # The above placeholder is substited for the following, generated query content, given e.g. a depth of 3
+    #
+    # OPTIONAL {
+    #     ?o_bwd_0 ?p_bwd_0 ?o.
+    #
+    #     OPTIONAL {
+    #         FILTER( isBlank(?o_bwd_0) ).
+    #         ?o_bwd_1 ?p_bwd_1 ?o_bwd_0.
+    #
+    #         OPTIONAL {
+    #             FILTER( isBlank(?o_bwd_1) ).
+    #             ?o_bwd_2 ?p_bwd_2 ?o_bwd_1.
+    #         }
+    #     }
+    # }
+    #
+    # OPTIONAL {
+    #     ?o ?p_fwd_0 ?o_fwd_0.
+    #
+    #     OPTIONAL {
+    #         FILTER( isBlank(?o_fwd_0) ).
+    #         ?o_fwd_0 ?p_fwd_1 ?o_fwd_1.
+    #
+    #         OPTIONAL {
+    #             FILTER( isBlank(?o_fwd_1) ).
+    #             ?o_fwd_1 ?p_fwd_2 ?o_fwd_2.
+    #         }
+    #     }
+    # }
+    ###
+}
+
+;
+
+#SELECT
+DELETE {
+$DELETE_CLAUSE
+    ###
+    # The above placeholder is substited for the following, generated query content, given e.g. a depth of 3
+    #
+    # ?o_bwd_2 ?p_bwd_2 ?o_bwd_1.
+    # ?o_bwd_1 ?p_bwd_1 ?o_bwd_0.
+    # ?o_bwd_0 ?p_bwd_0 ?o.
+    # ?o ?p_fwd_0 ?o_fwd_0.
+    # ?o_fwd_0 ?p_fwd_1 ?o_fwd_1.
+    # ?o_fwd_1 ?p_fwd_2 ?o_fwd_2.
+    ###
+}
+WHERE {
+    VALUES (?connectionType) {
+        $CONNECTION_TYPES
+    }
+
+    ?task rdfs:subClassOf ?o.
+    ?o rdf:type owl:Restriction.
+    ?o owl:onProperty ?b.
+    ?b rdfs:subPropertyOf ?connectionType.
+    ?b rdf:type owl:TransitiveProperty.
+    ?o ?restriction ?other_task.
+
+    FILTER (?restriction = owl:someValuesFrom || ?restriction = owl:allValuesFrom || ?restriction = owl:onClass ).
+
+    ?task rdf:type owl:Class.
+    ?task rdfs:subClassOf+ :FailureAnalysisMethods.
+    FILTER (!isBlank(?task) && isIRI(?task)).
+
+    ?other_task rdf:type owl:Class.
+    ?other_task rdfs:subClassOf+ :FailureAnalysisMethods.
+    FILTER (!isBlank(?other_task) && isIRI(?other_task)).
+
+$WHERE_CLAUSE_REST
+    ###
+    # The above placeholder is substited for the following, generated query content, given e.g. a depth of 3
+    #
+    # OPTIONAL {
+    #     ?o_bwd_0 ?p_bwd_0 ?o.
+    #
+    #     OPTIONAL {
+    #         FILTER( isBlank(?o_bwd_0) ).
+    #         ?o_bwd_1 ?p_bwd_1 ?o_bwd_0.
+    #
+    #         OPTIONAL {
+    #             FILTER( isBlank(?o_bwd_1) ).
+    #             ?o_bwd_2 ?p_bwd_2 ?o_bwd_1.
+    #         }
+    #     }
+    # }
+    #
+    # OPTIONAL {
+    #     ?o ?p_fwd_0 ?o_fwd_0.
+    #
+    #     OPTIONAL {
+    #         FILTER( isBlank(?o_fwd_0) ).
+    #         ?o_fwd_0 ?p_fwd_1 ?o_fwd_1.
+    #
+    #         OPTIONAL {
+    #             FILTER( isBlank(?o_fwd_1) ).
+    #             ?o_fwd_1 ?p_fwd_2 ?o_fwd_2.
+    #         }
+    #     }
+    # }
+    ###
+}
