@@ -1,6 +1,6 @@
 # LotTraveler
 
-Implementation of the LotTraveler system, as described in the respective [master-thesis](https://www.aau.at/en/aics/). TODO: ADAPT LINK!!!
+Implementation of the LotTraveler system, as described in the respective [master-thesis](https://resolver.obvsg.at/urn:nbn:at:at-ubk:1-45251).
 
 ## Project structure
 
