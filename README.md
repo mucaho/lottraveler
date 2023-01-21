@@ -1,6 +1,7 @@
 # LotTraveler
 
-Implementation of the LotTraveler system, as described in the respective [master-thesis](https://resolver.obvsg.at/urn:nbn:at:at-ubk:1-45251).
+Implementation of the LotTraveler system, as described in the respective [master-thesis](https://resolver.obvsg.at/urn:nbn:at:at-ubk:1-45251).   
+For a quick introduction, refer to the [thesis presentation](thesis/presentation.pdf).
 
 ## Project structure
 
