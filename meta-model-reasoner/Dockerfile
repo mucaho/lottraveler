@@ -1,7 +1,7 @@
 FROM node:12-alpine
 RUN apk add --no-cache tini
 RUN apk add --no-cache curl
-RUN apk add --no-cache gringo
+RUN apk add --no-cache clingo
 
 ADD https://raw.githubusercontent.com/eficode/wait-for/master/wait-for /bin/wait-for.sh
 RUN chmod +rx /bin/wait-for.sh
